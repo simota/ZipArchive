@@ -335,7 +335,8 @@ NSString *const SSZipArchiveErrorDomain = @"SSZipArchiveErrorDomain";
             };
 
             if (!strPath) {
-                for (int i = 0; i < sizeof(encodings); i++) {
+                int size = sizeof(encodings) / sizeof(CFStringEncoding);
+                for (int i = 0; i < size; i++) {
                     NSStringEncoding enc = CFStringConvertEncodingToNSStringEncoding(encodings[i]);
                     strPath = [NSString  stringWithCString:filename encoding:enc];
                     if (strPath) break;
