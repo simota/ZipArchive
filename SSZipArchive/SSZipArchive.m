@@ -327,9 +327,19 @@ NSString *const SSZipArchiveErrorDomain = @"SSZipArchiveErrorDomain";
             //            NSString * strPath = @(filename);
             NSString * strPath = [NSString stringWithCString:filename encoding:NSUTF8StringEncoding];
             //if filename contains chinese dir transform Encoding
+            CFStringEncoding encodings[] = {
+                kCFStringEncodingDOSJapanese,
+                kCFStringEncodingMacJapanese,
+                kCFStringEncodingShiftJIS,
+                kCFStringEncodingGB_18030_2000
+            };
+
             if (!strPath) {
-                NSStringEncoding enc = CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
-                strPath = [NSString  stringWithCString:filename encoding:enc];
+                for (int i = 0; i < sizeof(encodings); i++) {
+                    NSStringEncoding enc = CFStringConvertEncodingToNSStringEncoding(encodings[i]);
+                    strPath = [NSString  stringWithCString:filename encoding:enc];
+                    if (strPath) break;
+                }
             }
             //end by skyfox
             
