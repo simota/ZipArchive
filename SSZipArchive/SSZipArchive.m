@@ -389,6 +389,18 @@ NSString *const SSZipArchiveErrorDomain = @"SSZipArchiveErrorDomain";
             if (!fileIsSymbolicLink) {
                 // ensure we are not creating stale file entries
                 int readBytes = unzReadCurrentFile(zip, buffer, 4096);
+
+                // password error
+                if (readBytes < 0) {
+                    NSError *enospcError = [NSError errorWithDomain:NSPOSIXErrorDomain
+                                                               code:ENOSPC
+                                                           userInfo:nil];
+                    unzippingError = enospcError;
+                    unzCloseCurrentFile(zip);
+                    success = NO;
+                    break;
+                }
+
                 if (readBytes >= 0) {
                     FILE *fp = fopen((const char*)[fullPath fileSystemRepresentation], "wb");
                     while (fp) {
